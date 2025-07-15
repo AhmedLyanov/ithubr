@@ -16,7 +16,7 @@
 
 .main-content {
   flex: 1;
-  padding: 20px;
+  background: var(--main-background-color);
 }
 </style>
 
