@@ -1,0 +1,12 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: 0;
+}
+
+:root {
+  --main-background-color: #1b1b1f;
+  --vp-layout-max-width: 1440px;
+  --vp-sidebar-width: 272px;
+}
