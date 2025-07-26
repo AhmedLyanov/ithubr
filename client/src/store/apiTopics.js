@@ -26,7 +26,7 @@ export const useApiStore = defineStore('api', {
             subtopics: topic.subtopics.map((subtopic, index) => ({
               name: subtopic,
               content: {
-                description: `Details about ${subtopic} in ${framework.name}`,
+                description: `${subtopic} in ${framework.name}`,
                 image: `/assets/${framework.name.toLowerCase()}-${subtopic.toLowerCase().replace(/\s+/g, '-')}.png`,
                 code: topic.examples[index] || `// No example available for ${subtopic}`
               }

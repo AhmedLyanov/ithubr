@@ -4,99 +4,116 @@
     <div v-if="loading" class="loading">Loading...</div>
     <div v-if="error" class="error">{{ error }}</div>
     <div v-else-if="framework">
-
       <section v-if="!topic && !activeSubtopic" class="content-section">
         <h2>{{ framework.name }} Overview</h2>
-        <p>{{ framework.description || 'No description available.' }}</p>
+        <p>{{ framework.description || "No description available." }}</p>
       </section>
 
-
-      <div v-if="topic">
-        <h2>{{ topic.title }}</h2>
-        <p>{{ topic.description || 'No description available.' }}</p>
-        <div v-for="subtopic in topic.subtopics" :key="subtopic.name" :id="sanitizeId(subtopic.name)">
-          <section class="content-section">
-            <h3>{{ subtopic.name }}</h3>
-            <p>{{ subtopic.content.description }}</p>
-            <pre v-if="subtopic.content.code"><code>{{ subtopic.content.code }}</code></pre>
-          </section>
+      <div class="main_content__theme">
+        <div v-if="topic">
+          <h2>{{ topic.title }}</h2>
+          <p>{{ topic.description || "No description available." }}</p>
+          <div
+            v-for="subtopic in topic.subtopics"
+            :key="subtopic.name"
+            :id="sanitizeId(subtopic.name)"
+          >
+            <section class="content-section">
+              <h3>{{ subtopic.name }}</h3>
+              <pre
+                v-if="subtopic.content.code"
+              ><code>{{ subtopic.content.code }}</code></pre>
+            </section>
+          </div>
         </div>
       </div>
     </div>
     <div v-else>
-      <h2>Welcome to IThubr</h2>
+      <h2>Welcome to Sector IT</h2>
       <p>Select a framework from the sidebar to get started.</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { useApiStore } from '../store/apiTopics'
-import { storeToRefs } from 'pinia'
+import { computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { useApiStore } from "../store/apiTopics";
+import { storeToRefs } from "pinia";
 
-const route = useRoute()
-const apiStore = useApiStore()
-const { frameworks, loading, error } = storeToRefs(apiStore)
-
+const route = useRoute();
+const apiStore = useApiStore();
+const { frameworks, loading, error } = storeToRefs(apiStore);
 
 const sanitizeId = (name) => {
-  if (!name) return ''
+  if (!name) return "";
   return name
     .toLowerCase()
-    .replace(/\s+/g, '-') 
-    .replace(/[^a-z0-9-]/g, '')
-    .replace(/-+/g, '-') 
-    .trim()
-}
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .trim();
+};
 
 const framework = computed(() => {
-  const fw = frameworks.value.find(f => f.id === route.params.frameworkId)
-  console.log('Framework:', fw, 'Route params:', route.params)
-  return fw
-})
+  const fw = frameworks.value.find((f) => f.id === route.params.frameworkId);
+  console.log("Framework:", fw, "Route params:", route.params);
+  return fw;
+});
 
 const topic = computed(() => {
-  if (!framework.value || !route.params.topicId) return null
-  const tp = framework.value.topics.find(t => t.id === route.params.topicId)
-  console.log('Topic:', tp, 'Route params:', route.params)
-  return tp
-})
+  if (!framework.value || !route.params.topicId) return null;
+  const tp = framework.value.topics.find((t) => t.id === route.params.topicId);
+  console.log("Topic:", tp, "Route params:", route.params);
+  return tp;
+});
 
-const activeSubtopic = computed(() => decodeURIComponent(route.params.subtopicName || ''))
+const activeSubtopic = computed(() =>
+  decodeURIComponent(route.params.subtopicName || "")
+);
 
 onMounted(() => {
   if (!frameworks.value.length) {
-    apiStore.fetchFrameworks()
+    apiStore.fetchFrameworks();
   }
-  // Scroll to subtopic if specified in the URL
+ 
   if (route.hash) {
     setTimeout(() => {
-      const sanitizedHash = sanitizeId(decodeURIComponent(route.hash.replace('#', '')))
-      console.log('Attempting to scroll to:', `#${sanitizedHash}`)
-      const element = document.querySelector(`#${sanitizedHash}`)
+      const sanitizedHash = sanitizeId(
+        decodeURIComponent(route.hash.replace("#", ""))
+      );
+      console.log("Attempting to scroll to:", `#${sanitizedHash}`);
+      const element = document.querySelector(`#${sanitizedHash}`);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
+        element.scrollIntoView({ behavior: "smooth" });
       } else {
-        console.warn(`Element with ID #${sanitizedHash} not found`)
+        console.warn(`Element with ID #${sanitizedHash} not found`);
       }
-    }, 500)
+    }, 500);
   }
-})
+});
 </script>
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 
 .home-container {
-  max-width: 800px;
   margin: 0 auto;
   padding: 1.5rem 1.25rem;
   background-color: #1b1b1f;
   color: #ffffff;
   min-height: 100vh;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.5;
+}
+
+.main_content__theme{
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem;
+  background-color: #1b1b1f;
+  color: #ffffff;
+  min-height: 100vh;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .content-section {
@@ -122,7 +139,7 @@ pre {
 }
 
 code {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace;
   color: #f8f8f2;
   font-size: 0.9rem;
 }

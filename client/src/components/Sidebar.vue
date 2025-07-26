@@ -1,42 +1,71 @@
 <template>
   <aside>
     <div class="container__sidebar__main_content">
-      <div class="container__logo-ithubr">
-        <h2>IThubr</h2>
+      <div class="container__logo-Sector_IT">
+        <h2>Sector IT</h2>
       </div>
       <div v-if="loading" class="loading">Loading...</div>
       <div v-if="error" class="error">{{ error }}</div>
       <div v-else class="container__content_sidebar">
-        <div v-for="framework in frameworks" :key="framework.id" class="framework-section">
+        <div
+          v-for="framework in frameworks"
+          :key="framework.id"
+          class="framework-section"
+        >
           <div
             class="framework-header"
             :class="{ active: activeFramework === framework.id }"
             @click="selectFramework(framework.id)"
           >
             <span>{{ framework.name }}</span>
-            <span class="arrow">{{ expandedFrameworks.includes(framework.id) ? '▼' : '▶' }}</span>
+            <span class="arrow">{{
+              expandedFrameworks.includes(framework.id) ? "▼" : "▶"
+            }}</span>
           </div>
 
           <transition name="slide-fade">
-            <div v-if="expandedFrameworks.includes(framework.id)" class="topics-container">
-              <div v-for="topic in framework.topics" :key="topic.id" class="topic-item">
+            <div
+              v-if="expandedFrameworks.includes(framework.id)"
+              class="topics-container"
+            >
+              <div
+                v-for="topic in framework.topics"
+                :key="topic.id"
+                class="topic-item"
+              >
                 <div
                   class="topic-header"
-                  :class="{ active: activeTopic === topic.id && activeFramework === framework.id }"
+                  :class="{
+                    active:
+                      activeTopic === topic.id &&
+                      activeFramework === framework.id,
+                  }"
                   @click="selectTopic(framework.id, topic.id)"
                 >
                   <span>{{ topic.title }}</span>
-                  <span class="arrow">{{ expandedTopics[framework.id]?.includes(topic.id) ? '▼' : '▶' }}</span>
+                  <span class="arrow">{{
+                    expandedTopics[framework.id]?.includes(topic.id) ? "▼" : "▶"
+                  }}</span>
                 </div>
 
                 <transition name="slide-fade">
-                  <div v-if="expandedTopics[framework.id]?.includes(topic.id)" class="subtopics-container">
+                  <div
+                    v-if="expandedTopics[framework.id]?.includes(topic.id)"
+                    class="subtopics-container"
+                  >
                     <div
                       v-for="(subtopic, index) in topic.subtopics"
                       :key="index"
                       class="subtopic-item"
-                      :class="{ active: activeSubtopic === subtopic.name && activeTopic === topic.id && activeFramework === framework.id }"
-                      @click="selectSubtopic(framework.id, topic.id, subtopic.name)"
+                      :class="{
+                        active:
+                          activeSubtopic === subtopic.name &&
+                          activeTopic === topic.id &&
+                          activeFramework === framework.id,
+                      }"
+                      @click="
+                        selectSubtopic(framework.id, topic.id, subtopic.name)
+                      "
                     >
                       {{ subtopic.name }}
                     </div>
@@ -52,91 +81,95 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useApiStore } from '../store/apiTopics'
-import { storeToRefs } from 'pinia'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, onMounted, computed } from "vue";
+import { useApiStore } from "../store/apiTopics";
+import { storeToRefs } from "pinia";
+import { useRoute, useRouter } from "vue-router";
 
-const apiStore = useApiStore()
-const { frameworks, loading, error } = storeToRefs(apiStore)
-const route = useRoute()
-const router = useRouter()
+const apiStore = useApiStore();
+const { frameworks, loading, error } = storeToRefs(apiStore);
+const route = useRoute();
+const router = useRouter();
 
-const expandedFrameworks = ref([])
-const expandedTopics = ref({})
+const expandedFrameworks = ref([]);
+const expandedTopics = ref({});
 
-const activeFramework = computed(() => route.params.frameworkId)
-const activeTopic = computed(() => route.params.topicId)
-const activeSubtopic = computed(() => decodeURIComponent(route.params.subtopicName || ''))
+const activeFramework = computed(() => route.params.frameworkId);
+const activeTopic = computed(() => route.params.topicId);
+const activeSubtopic = computed(() =>
+  decodeURIComponent(route.params.subtopicName || "")
+);
 const sanitizeId = (name) => {
-  if (!name) return ''
-  return name
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-') 
-    .trim()
-}
+  if (!name) return "";
+  return name.toLowerCase().replace(/\s+/g, "-").replace(/-+/g, "-").trim();
+};
 
 const toggleFramework = (frameworkId) => {
-  const index = expandedFrameworks.value.indexOf(frameworkId)
+  const index = expandedFrameworks.value.indexOf(frameworkId);
   if (index > -1) {
-    expandedFrameworks.value.splice(index, 1)
-    delete expandedTopics.value[frameworkId]
+    expandedFrameworks.value.splice(index, 1);
+    delete expandedTopics.value[frameworkId];
   } else {
-    expandedFrameworks.value.push(frameworkId)
+    expandedFrameworks.value.push(frameworkId);
   }
-}
+};
 
 const toggleTopic = (frameworkId, topicId) => {
   if (!expandedTopics.value[frameworkId]) {
-    expandedTopics.value[frameworkId] = []
+    expandedTopics.value[frameworkId] = [];
   }
-  const topics = expandedTopics.value[frameworkId]
-  const topicIndex = topics.indexOf(topicId)
+  const topics = expandedTopics.value[frameworkId];
+  const topicIndex = topics.indexOf(topicId);
   if (topicIndex > -1) {
-    topics.splice(topicIndex, 1)
+    topics.splice(topicIndex, 1);
   } else {
-    topics.push(topicId)
+    topics.push(topicId);
   }
-  expandedTopics.value = { ...expandedTopics.value }
-}
+  expandedTopics.value = { ...expandedTopics.value };
+};
 
 const selectFramework = (frameworkId) => {
-  console.log('Selecting framework:', frameworkId)
-  toggleFramework(frameworkId)
-  router.push({ name: 'Framework', params: { frameworkId } })
-}
+  console.log("Selecting framework:", frameworkId);
+  toggleFramework(frameworkId);
+  router.push({ name: "Framework", params: { frameworkId } });
+};
 
 const selectTopic = (frameworkId, topicId) => {
-  console.log('Selecting topic:', { frameworkId, topicId })
-  toggleTopic(frameworkId, topicId)
-  router.push({ name: 'Topic', params: { frameworkId, topicId } })
-}
+  console.log("Selecting topic:", { frameworkId, topicId });
+  toggleTopic(frameworkId, topicId);
+  router.push({ name: "Topic", params: { frameworkId, topicId } });
+};
 
 const selectSubtopic = (frameworkId, topicId, subtopicName) => {
-  const sanitizedHash = sanitizeId(subtopicName)
-  const encodedSubtopicName = encodeURIComponent(subtopicName)
-  console.log('Selecting subtopic:', { frameworkId, topicId, subtopicName, encodedSubtopicName, sanitizedHash })
+  const sanitizedHash = sanitizeId(subtopicName);
+  const encodedSubtopicName = encodeURIComponent(subtopicName);
+  console.log("Selecting subtopic:", {
+    frameworkId,
+    topicId,
+    subtopicName,
+    encodedSubtopicName,
+    sanitizedHash,
+  });
   router.push({
-    name: 'Subtopic',
+    name: "Subtopic",
     params: { frameworkId, topicId, subtopicName: encodedSubtopicName },
-    hash: `#${sanitizedHash}`
-  })
-}
+    hash: `#${sanitizedHash}`,
+  });
+};
 
 onMounted(() => {
-  apiStore.fetchFrameworks()
+  apiStore.fetchFrameworks();
   if (activeFramework.value) {
-    expandedFrameworks.value.push(activeFramework.value)
+    expandedFrameworks.value.push(activeFramework.value);
   }
   if (activeTopic.value && activeFramework.value) {
-    expandedTopics.value[activeFramework.value] = [activeTopic.value]
+    expandedTopics.value[activeFramework.value] = [activeTopic.value];
   }
-})
+});
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 
 aside {
   background: #1b1b1f;
@@ -146,7 +179,7 @@ aside {
   position: sticky;
   top: 0;
   border-right: 1px solid #2e2e32;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 0.95rem;
 }
 
@@ -207,13 +240,13 @@ aside {
   padding-left: 1rem;
 }
 
-.container__logo-ithubr {
+.container__logo-Sector_IT {
   padding: 1rem 1.25rem;
   border-bottom: 1px solid #2e2e32;
   margin-bottom: 0.75rem;
 }
 
-.container__logo-ithubr h2 {
+.container__logo-Sector_IT h2 {
   color: white;
   font-size: 1.25rem;
   font-weight: 600;
@@ -229,6 +262,9 @@ aside {
   transition: all 0.2s ease;
   margin: 0.125rem 0;
   line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .subtopic-item:hover {
