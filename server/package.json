@@ -1,0 +1,25 @@
+{
+  "name": "sector_server_it",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "serve": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AhmedLyanov/ithubr.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AhmedLyanov/ithubr/issues"
+  },
+  "homepage": "https://github.com/AhmedLyanov/ithubr#readme",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mongodb": "^6.18.0",
+    "path-to-regexp": "^6.2.1"
+  }
+}

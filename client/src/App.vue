@@ -1,10 +1,11 @@
 <template>
-  <div class="layout">
+  <main class="layout">
     <Sidebar v-if="!route.meta.hideSidebar"/>
-    <main class="main-content">
+    <div class="main-content">
+       <Header />
       <RouterView />
-    </main>
-  </div>
+    </div>
+  </main>
 
 </template>
 
@@ -23,6 +24,7 @@
 <script setup>
 import Sidebar from './components/Sidebar.vue';
 import { useRoute } from 'vue-router'
+import Header from './components/Header.vue';
 
 const route = useRoute()
 </script>

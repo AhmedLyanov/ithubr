@@ -1,79 +1,87 @@
 <template>
   <aside>
     <div class="container__sidebar__main_content">
+     
       <div class="container__logo-Sector_IT">
-        <h2>Sector IT</h2>
+        <Logo />
       </div>
-      <div v-if="loading" class="loading">Loading...</div>
-      <div v-if="error" class="error">{{ error }}</div>
-      <div v-else class="container__content_sidebar">
-        <div
-          v-for="framework in frameworks"
-          :key="framework.id"
-          class="framework-section"
-        >
-          <div
-            class="framework-header"
-            :class="{ active: activeFramework === framework.id }"
-            @click="selectFramework(framework.id)"
-          >
-            <span>{{ framework.name }}</span>
-            <span class="arrow">{{
-              expandedFrameworks.includes(framework.id) ? "▼" : "▶"
-            }}</span>
-          </div>
 
-          <transition name="slide-fade">
+
+      <div class="scrollable-content">
+        <div v-if="loading" class="loading">Loading...</div>
+        <div v-if="error" class="error">{{ error }}</div>
+        <div v-else class="container__content_sidebar">
+          <div
+            v-for="framework in frameworks"
+            :key="framework.id"
+            class="framework-section"
+          >
             <div
-              v-if="expandedFrameworks.includes(framework.id)"
-              class="topics-container"
+              class="framework-header"
+              :class="{ active: activeFramework === framework.id }"
+              @click="selectFramework(framework.id)"
             >
+            <div class="container__framework-info">
+              <img class="logotype__framework" :src="framework.image" width="30px" height="30px">
+              <span>{{ framework.name }}</span>
+            </div>
+              <span class="arrow">{{
+                expandedFrameworks.includes(framework.id) ? "▼" : "▶"
+              }}</span>
+            </div>
+
+            <transition name="slide-fade">
               <div
-                v-for="topic in framework.topics"
-                :key="topic.id"
-                class="topic-item"
+                v-if="expandedFrameworks.includes(framework.id)"
+                class="topics-container"
               >
                 <div
-                  class="topic-header"
-                  :class="{
-                    active:
-                      activeTopic === topic.id &&
-                      activeFramework === framework.id,
-                  }"
-                  @click="selectTopic(framework.id, topic.id)"
+                  v-for="topic in framework.topics"
+                  :key="topic.id"
+                  class="topic-item"
                 >
-                  <span>{{ topic.title }}</span>
-                  <span class="arrow">{{
-                    expandedTopics[framework.id]?.includes(topic.id) ? "▼" : "▶"
-                  }}</span>
-                </div>
-
-                <transition name="slide-fade">
                   <div
-                    v-if="expandedTopics[framework.id]?.includes(topic.id)"
-                    class="subtopics-container"
+                    class="topic-header"
+                    :class="{
+                      active:
+                        activeTopic === topic.id &&
+                        activeFramework === framework.id,
+                    }"
+                    @click="selectTopic(framework.id, topic.id)"
                   >
-                    <div
-                      v-for="(subtopic, index) in topic.subtopics"
-                      :key="index"
-                      class="subtopic-item"
-                      :class="{
-                        active:
-                          activeSubtopic === subtopic.name &&
-                          activeTopic === topic.id &&
-                          activeFramework === framework.id,
-                      }"
-                      @click="
-                        selectSubtopic(framework.id, topic.id, subtopic.name)
-                      "
-                    >
-                      {{ subtopic.name }}
-                    </div>
+                    <span>{{ topic.title }}</span>
+                    <span class="arrow">{{
+                      expandedTopics[framework.id]?.includes(topic.id) ? "▼" : "▶"
+                    }}</span>
                   </div>
-                </transition>
+
+                  <transition name="slide-fade">
+                    <div
+                      v-if="expandedTopics[framework.id]?.includes(topic.id)"
+                      class="subtopics-container"
+                    >
+                      <div
+                        v-for="(subtopic, index) in topic.subtopics"
+                        :key="index"
+                        class="subtopic-item"
+                        :class="{
+                          active:
+                            activeSubtopic === subtopic.name &&
+                            activeTopic === topic.id &&
+                            activeFramework === framework.id,
+                        }"
+                        @click="
+                          selectSubtopic(framework.id, topic.id, subtopic.name)
+                        "
+                      >
+                        {{ subtopic.name }}
+                      </div>
+                    </div>
+                  </transition>
+                </div>
               </div>
-            </div>
-          </transition>
+            </transition>
+          </div>
         </div>
       </div>
     </div>
@@ -85,7 +93,7 @@ import { ref, onMounted, computed } from "vue";
 import { useApiStore } from "../store/apiTopics";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
-
+import Logo from "./";
 const apiStore = useApiStore();
 const { frameworks, loading, error } = storeToRefs(apiStore);
 const route = useRoute();
@@ -129,13 +137,11 @@ const toggleTopic = (frameworkId, topicId) => {
 };
 
 const selectFramework = (frameworkId) => {
-  console.log("Selecting framework:", frameworkId);
   toggleFramework(frameworkId);
   router.push({ name: "Framework", params: { frameworkId } });
 };
 
 const selectTopic = (frameworkId, topicId) => {
-  console.log("Selecting topic:", { frameworkId, topicId });
   toggleTopic(frameworkId, topicId);
   router.push({ name: "Topic", params: { frameworkId, topicId } });
 };
@@ -143,13 +149,6 @@ const selectTopic = (frameworkId, topicId) => {
 const selectSubtopic = (frameworkId, topicId, subtopicName) => {
   const sanitizedHash = sanitizeId(subtopicName);
   const encodedSubtopicName = encodeURIComponent(subtopicName);
-  console.log("Selecting subtopic:", {
-    frameworkId,
-    topicId,
-    subtopicName,
-    encodedSubtopicName,
-    sanitizedHash,
-  });
   router.push({
     name: "Subtopic",
     params: { frameworkId, topicId, subtopicName: encodedSubtopicName },
@@ -175,18 +174,41 @@ aside {
   background: #1b1b1f;
   width: 260px;
   height: 100vh;
-  overflow-y: auto;
   position: sticky;
   top: 0;
-  border-right: 1px solid #2e2e32;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 0.95rem;
 }
 
 .container__sidebar__main_content {
-  width: 100%;
-  height: 100%;
-  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.container__logo-Sector_IT {
+ 
+  border-bottom: 1px solid #2e2e32;
+  flex-shrink: 0;
+  height: 60px;
+  
+}
+
+.scrollable-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-bottom: 1rem;
+      border-right: 1px solid #2e2e32;
+}
+
+.container__framework-info{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.logotype__framework{
+  object-fit: cover;
 }
 
 .framework-section {
@@ -204,6 +226,9 @@ aside {
   border-radius: 4px;
   transition: all 0.2s ease;
   margin: 0.125rem 0;
+      display: flex
+;
+    place-items: center;
   font-size: 0.95rem;
 }
 
@@ -238,19 +263,6 @@ aside {
   margin-left: 0.75rem;
   border-left: 1px solid #2e2e32;
   padding-left: 1rem;
-}
-
-.container__logo-Sector_IT {
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid #2e2e32;
-  margin-bottom: 0.75rem;
-}
-
-.container__logo-Sector_IT h2 {
-  color: white;
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0;
 }
 
 .subtopic-item {
@@ -326,5 +338,27 @@ aside {
 .framework-header.active .arrow,
 .topic-header.active .arrow {
   color: #42b883;
+}
+
+.scrollable-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: #2e2e32;
+  border-radius: 3px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: #3e3e42;
+}
+
+.scrollable-content {
+  scrollbar-width: thin;
+  scrollbar-color: #2e2e32 transparent;
 }
 </style>
