@@ -93,7 +93,7 @@ import { ref, onMounted, computed } from "vue";
 import { useApiStore } from "../store/apiTopics";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
-import Logo from "./";
+import Logo from "./Logo.vue";
 const apiStore = useApiStore();
 const { frameworks, loading, error } = storeToRefs(apiStore);
 const route = useRoute();
