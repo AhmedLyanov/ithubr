@@ -12,7 +12,7 @@ export const useApiStore = defineStore('api', {
 async fetchFrameworks() {
   this.loading = true;
   try {
-    const response = await axios.get('https://vaykino.ru/api/frameworks');
+    const response = await axios.get('/api/frameworks');
     
     const frameworksData = Array.isArray(response.data) 
       ? response.data[0]?.frameworks || response.data 
