@@ -4,7 +4,13 @@ const { MongoClient } = require('mongodb');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: ['https://vaykino.ru', 'http://localhost:5173'], // Добавьте все нужные домены
+  credentials: true
+}));
+
+// Добавьте обработку OPTIONS запросов
+app.options('*', cors());
 app.use(express.json());
 
 const PORT = 3001;
