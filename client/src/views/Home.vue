@@ -1,17 +1,17 @@
 <template>
   <div class="home-container">
-    <h1 v-if="framework">{{ framework.name }} Документация</h1>
+    <h1 v-if="framework">{{ framework.name }} Documentation</h1>
     <div v-if="error" class="error">{{ error }}</div>
     <div v-else-if="framework">
       <section v-if="!topic && !activeSubtopic" class="content-section">
-        <h2>Обзор {{ framework.name }}</h2>
-        <p>{{ framework.description || "Описание отсутствует." }}</p>
+        <h2>{{ framework.name }} Overview</h2>
+        <p>{{ framework.description || "No description available." }}</p>
       </section>
 
       <div class="main_content__theme">
         <div v-if="topic">
           <h2>{{ topic.title }}</h2>
-          <p>{{ topic.description || "Описание отсутствует." }}</p>
+          <p>{{ topic.description || "No description available." }}</p>
           <div
             v-for="subtopic in topic.subtopics"
             :key="subtopic.name"
@@ -34,22 +34,22 @@
           <div class="logo-circle">
             <img
               src="../assets/CMD-S_notext.svg"
-              alt="CMD-S Логотип"
+              alt="CMD-S Logo"
               class="welcome-logo"
             />
           </div>
         </div>
-        <h2>ДОБРО ПОЖАЛОВАТЬ В <span class="cmd-text">CMD-S</span></h2>
-        <p class="welcome-subtitle">СОЗДАВАЙ · МОНИТОРЬ · РАЗВЕРТЫВАЙ</p>
+        <h2>WELCOME TO <span class="cmd-text">CMD-S</span></h2>
+        <p class="welcome-subtitle">CREATE · MONITOR · DEPLOY</p>
         <p class="welcome-description">
-          Ваша комплексная платформа для удобной разработки и управления инфраструктурой.
-          Выберите фреймворк в боковом меню для изучения документации.
+          Your comprehensive platform for seamless development and infrastructure management.
+          Select a framework from the sidebar to explore its documentation.
         </p>
         <div class="tech-grid">
           <div class="tech-item">DEVOPS</div>
-          <div class="tech-item">ОБЛАКО</div>
+          <div class="tech-item">CLOUD</div>
           <div class="tech-item">CI/CD</div>
-          <div class="tech-item">АВТОМАТИЗАЦИЯ</div>
+          <div class="tech-item">AUTOMATION</div>
         </div>
       </div>
     </div>
@@ -78,14 +78,14 @@ const sanitizeId = (name) => {
 
 const framework = computed(() => {
   const fw = frameworks.value.find((f) => f.id === route.params.frameworkId);
-  console.log("Фреймворк:", fw, "Параметры пути:", route.params);
+  console.log("Framework:", fw, "Route params:", route.params);
   return fw;
 });
 
 const topic = computed(() => {
   if (!framework.value || !route.params.topicId) return null;
   const tp = framework.value.topics.find((t) => t.id === route.params.topicId);
-  console.log("Тема:", tp, "Параметры пути:", route.params);
+  console.log("Topic:", tp, "Route params:", route.params);
   return tp;
 });
 
@@ -103,12 +103,12 @@ onMounted(() => {
       const sanitizedHash = sanitizeId(
         decodeURIComponent(route.hash.replace("#", ""))
       );
-      console.log("Попытка прокрутки к:", `#${sanitizedHash}`);
+      console.log("Attempting to scroll to:", `#${sanitizedHash}`);
       const element = document.querySelector(`#${sanitizedHash}`);
       if (element) {
         element.scrollIntoView({ behavior: "smooth" });
       } else {
-        console.warn(`Элемент с ID #${sanitizedHash} не найден`);
+        console.warn(`Element with ID #${sanitizedHash} not found`);
       }
     }, 500);
   }
@@ -128,7 +128,7 @@ onMounted(() => {
   line-height: 1.5;
 }
 
-/* Стили приветственного раздела */
+/* Welcome Section Styles */
 .welcome-container {
   display: flex;
   align-items: center;
@@ -243,7 +243,7 @@ onMounted(() => {
   letter-spacing: 1px;
 }
 
-/* Стили контента документации */
+/* Documentation Content Styles */
 .main_content__theme {
   max-width: 1300px;
   margin: 0 auto;
@@ -314,7 +314,7 @@ p {
   font-size: 1.1rem;
 }
 
-/* Анимации */
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -326,7 +326,7 @@ p {
   }
 }
 
-/* Адаптивные стили */
+/* Responsive Styles */
 @media (max-width: 768px) {
   .welcome-content {
     padding: 2rem 1.5rem;
