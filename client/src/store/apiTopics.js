@@ -13,7 +13,7 @@ async fetchFrameworks() {
   this.loading = true;
   try {
     const response = await axios.get('/api/frameworks', {
-  baseURL: 'https://ithubr.onrender.com/',
+  baseURL: 'https://ithubr.onrender.com',
   withCredentials: true
 });
     
