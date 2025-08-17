@@ -1,21 +1,13 @@
-// server/server.js
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const cors = require('cors');
 
 const app = express();
-app.use(cors({
-  origin: ['https://vaykino.ru', 'http://localhost:5173'], // Добавьте все нужные домены
-  credentials: true
-}));
-
-// Добавьте обработку OPTIONS запросов
-app.options('*', cors());
+app.use(cors()); // Упрощенная настройка CORS для теста
 app.use(express.json());
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const uri = 'mongodb+srv://Razved4ik_06:SectorAdmin006@sectorit.laybrou.mongodb.net/?retryWrites=true&w=majority&appName=SectorIT';
-
 
 const client = new MongoClient(uri);
 
@@ -29,7 +21,6 @@ async function run() {
       res.json(frameworks);
     });
 
-
     app.listen(PORT, () => {
       console.log(`🚀 Сервер запущен: http://localhost:${PORT}`);
     });
@@ -41,7 +32,6 @@ async function run() {
 }
 
 run();
-
 
 process.on('SIGINT', async () => {
   await client.close();
