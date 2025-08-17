@@ -3,7 +3,26 @@ const { MongoClient } = require('mongodb');
 const cors = require('cors');
 
 const app = express();
-app.use(cors()); // Упрощенная настройка CORS для теста
+
+// Точная настройка CORS
+const allowedOrigins = ['https://ithubr.vercel.app', 'http://localhost:5173'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Разрешить запросы без origin (например, от мобильных приложений или Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
 const PORT = process.env.PORT || 3001;
@@ -17,8 +36,13 @@ async function run() {
     const db = client.db('Sector_Discipline');
 
     app.get('/api/frameworks', async (req, res) => {
-      const frameworks = await db.collection('frameworks').find({}).toArray();
-      res.json(frameworks);
+      try {
+        const frameworks = await db.collection('frameworks').find({}).toArray();
+        res.json(frameworks);
+      } catch (err) {
+        console.error('Database error:', err);
+        res.status(500).json({ error: 'Internal server error' });
+      }
     });
 
     app.listen(PORT, () => {
