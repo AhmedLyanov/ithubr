@@ -4,21 +4,18 @@ const { MongoClient } = require('mongodb');
 const cors = require('cors');
 
 const app = express();
-
-// Получение переменных из .env
 const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI;
 const DB_NAME = process.env.DB_NAME || 'Sector_Discipline';
 
-// Разбор разрешенных доменов из строки
+
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',') 
   : ['http://localhost:5173'];
 
-// Точная настройка CORS
 app.use(cors({
   origin: function (origin, callback) {
-    // Разрешить запросы без origin (например, от мобильных приложений или Postman)
+ 
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.indexOf(origin) !== -1) {
