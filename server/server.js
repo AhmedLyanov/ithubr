@@ -1,12 +1,21 @@
+require('dotenv').config();
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const cors = require('cors');
 
 const app = express();
 
-// Точная настройка CORS
-const allowedOrigins = ['https://ithubr.vercel.app', 'http://localhost:5173'];
+// Получение переменных из .env
+const PORT = process.env.PORT || 3001;
+const MONGODB_URI = process.env.MONGODB_URI;
+const DB_NAME = process.env.DB_NAME || 'Sector_Discipline';
 
+// Разбор разрешенных доменов из строки
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',') 
+  : ['http://localhost:5173'];
+
+// Точная настройка CORS
 app.use(cors({
   origin: function (origin, callback) {
     // Разрешить запросы без origin (например, от мобильных приложений или Postman)
@@ -25,15 +34,12 @@ app.use(cors({
 
 app.use(express.json());
 
-const PORT = process.env.PORT || 3001;
-const uri = 'mongodb+srv://Razved4ik_06:SectorAdmin006@sectorit.laybrou.mongodb.net/?retryWrites=true&w=majority&appName=SectorIT';
-
-const client = new MongoClient(uri);
+const client = new MongoClient(MONGODB_URI);
 
 async function run() {
   try {
     await client.connect();
-    const db = client.db('Sector_Discipline');
+    const db = client.db(DB_NAME);
 
     app.get('/api/frameworks', async (req, res) => {
       try {
